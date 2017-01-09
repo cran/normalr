@@ -1,4 +1,7 @@
 # normalr
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/normalr)](https://cran.r-project.org/package=normalr)
+[![Build Status](https://travis-ci.org/kcha193/normalr.png?branch=master)](https://travis-ci.org/kcha193/normalr)
+[![Coverage Status](https://img.shields.io/codecov/c/github/kcha193/normalr/master.svg)](https://codecov.io/github/kcha193/normalr?branch=master)
 
 
 The normalr allows you to perform normalisation on multiple variables in large-scale datasets. 
@@ -26,3 +29,14 @@ library(normalr)
 
 normaliseData(mtcars, getLambda(mtcars))
 ```
+
+## Shiny apps
+
+The following example run a shiny appliaction uses normalr to normalise any dataset that the user input.
+
+```R
+library(normalr)
+
+normalrShiny()
+```
+The shiny app is also available from [shinyapps.io](https://kcha193.shinyapps.io/normalr/).

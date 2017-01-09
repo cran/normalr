@@ -1,3 +1,8 @@
+# normalr 0.0.2
+
+* add the shiny app using `normalrShiny()`.
+* fix on the negative data with negative lambda.
+
 # normalr 0.0.1
 
 * First release with three main functions: 
