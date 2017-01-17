@@ -11,11 +11,11 @@ ui <- fluidPage(
   titlePanel("normalr R package"),
   sidebarLayout(
     sidebarPanel(
+      checkboxInput('testData', 'Use test Dataset', FALSE),
       fileInput('file1', 'Choose CSV File',
                 accept=c('text/csv',
                          'text/comma-separated-values,text/plain',
                          '.csv')),
-      tags$hr(),
       checkboxInput('header', 'Header', TRUE),
       radioButtons('sep', 'Separator',
                    c(Comma=',',
@@ -24,7 +24,7 @@ ui <- fluidPage(
                    ','),
       downloadButton('downloadData', 'Download'),
       h3("Latest Update:"),
-      h4("2017-01-03"),
+      h4("2017-01-17"),
       h3("Contact email:"),
       a("k.chang@auckland.ac.nz",
         href= "mailto:k.chang@auckland.ac.nz")
@@ -48,6 +48,8 @@ server <- function(input, output) {
 
 
   oldData <- reactive({
+
+    if(input$testData) return(testData)
 
     inFile <- input$file1
 
