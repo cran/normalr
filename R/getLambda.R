@@ -8,11 +8,14 @@
 #' @param parallel perform the computation in parallel, default setting is TRUE.
 #'
 #' @return a numeric vector
+#' @references {
+#'Courtney, M. G. R., and Chang, K. C. (2018) Dealing with non-normality: an introduction and step-by-step guide using R. TEST, doi: 10.1111/test.12154.
+#' }
 #' @importFrom purrr keep map map_dbl
+#' @importFrom rlang is_bare_numeric
 #' @importFrom magrittr %>%
 #' @importFrom stats as.formula
-#' @importFrom ddR dlapply collect
-#' @importFrom parallel detectCores
+#' @importFrom parallel detectCores makeCluster parLapply stopCluster
 #' @export
 #'
 #' @examples
@@ -22,7 +25,7 @@ getLambda <-
   function(dat, lambda = seq(-10, 10, 1/100), parallel = TRUE){
     stopifnot(is.data.frame(dat))
 
-    dat <- purrr::keep(dat, purrr::is_numeric)
+    dat <- purrr::keep(dat, rlang::is_bare_numeric)
 
     dat <- data.frame(apply(rbind(1 - apply(dat, 2, min), dat), 2, function(x) x[1] + x[-1])) #anchor at 1
 
@@ -39,10 +42,16 @@ getLambda <-
       if(ncol(dat) == 1){
         MASS::boxcox(formulaList, data = dat, lambda = lambda, plotit = FALSE)
       } else if(parallel){
-        formulaList %>% ddR::dlapply(function(x)
-          MASS::boxcox(x, data = dat, lambda = lambda, plotit = FALSE),
-                nparts = min(parallel::detectCores(), ncol(dat))) %>%
-          ddR::collect()
+
+        cl <- parallel::makeCluster(min(parallel::detectCores(), ncol(dat)))
+
+        res <-
+        parallel::parLapply(cl, formulaList, function(x)
+          MASS::boxcox(x, data = dat, lambda = lambda, plotit = FALSE))
+
+        parallel::stopCluster(cl)
+
+        res
       } else {
         formulaList %>% purrr::map(function(x)
           MASS::boxcox(x, data = dat, lambda = lambda, plotit = FALSE))
